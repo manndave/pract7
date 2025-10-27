@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX 100
+
+int V = 5;  
+
+
+int graph[MAX][MAX] = {
+    {0, 1, 1, 0, 1}, 
+    {1, 0, 1, 1, 0},  
+    {1, 1, 0, 1, 1},  
+    {0, 1, 1, 0, 1},  
+    {1, 0, 1, 1, 0}   
+};
+
+int path[MAX];
+
+bool isSafe(int v, int pos) {
+    if (graph[path[pos - 1]][v] == 0)
+        return false;
+
+    for (int i = 0; i < pos; i++)
+        if (path[i] == v)
+            return false;
+
+    return true;
+}
+
+bool hamiltonianCycle(int pos) {
+    if (pos == V) {
+        return graph[path[pos - 1]][path[0]] == 1;
+    }
+
+    for (int v = 1; v < V; v++) {
+        if (isSafe(v, pos)) {
+            path[pos] = v;
+            if (hamiltonianCycle(pos + 1))
+                return true;
+            path[pos] = -1;
+        }
+    }
+
+    return false;
+}
+
+int main() {
+    for (int i = 0; i < V; i++)
+        path[i] = -1;
+
+    path[0] = 0;  
+
+    if (hamiltonianCycle(1)) {
+        printf("Hamiltonian Cycle found:\n");
+        for (int i = 0; i < V; i++) {
+            char label = 'T' + path[i];  
+            printf("%c -> ", label);
+        }
+        printf("T\n");  
+        
+    } else {
+        printf("No Hamiltonian Cycle exists for the given city layout.\n");
+    }
+
+    return 0;
+}
